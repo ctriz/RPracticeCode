@@ -1,0 +1,108 @@
+#***********************************************************#
+# Some Primers on RollApply Function from the zoo package
+#***********************************************************#
+
+#install.packages("zoo")
+
+
+if ("zoo" %in% rownames(installed.packages()) == FALSE)
+{
+  install.packages("zoo")
+}else {
+  paste("\n Zoo package already installed")
+}
+
+# Load the package
+
+library(zoo)
+
+
+# Few examples from the zoo.roallaply documentation
+
+# Create a simple matrix
+mymatrix <- ( matrix(data=1:20, nrow=4, ncol=5) ) 
+
+# Sum over its rows taking 4 elements at a time
+rollmatrix <- rollapply( t(mymatrix), 4, sum ) 
+
+
+# Some more examples
+z <- zoo(11:15, as.Date(31:35))
+
+##1970-02-01 1970-02-02 1970-02-03 1970-02-04 1970-02-05 
+#11         12         13         14         15 
+
+rollapply(z, 2, mean)
+# Takes 2 rolling values and compute their mean
+# 1970-02-01 1970-02-02 1970-02-03 1970-02-04 
+# 11.5       12.5       13.5       14.5 
+
+rollapply(z, 3, mean)
+# Takes 3 rolling values and compute their mean
+#1970-02-02 1970-02-03 1970-02-04 
+#12         13         14 
+
+rollapply(z, 2, mean, by =2)
+#Takes 2 rolling values by skipping to the 2 values (11,12) & (13,14)
+#1970-02-01 1970-02-03 
+#11.5       13.5 
+
+
+#***********************************************************#
+# Apply Rollapply on a Time Series dataset
+#***********************************************************#
+
+# R Dataset
+head(EuStockMarkets)
+ftseIndex <- EuStockMarkets[, 4]
+
+# TS Attributes
+
+class(ftseIndex)
+start(ftseIndex)
+end(ftseIndex)
+frequency(ftseIndex)
+summary(ftseIndex)
+plot(ftseIndex, col = "GRAY")
+
+ti = 1:length(ftseIndex)
+
+m1 = lm(ftseIndex~ti)
+summary(m1)
+
+fit <- lm(ftseIndex~time(ftseIndex)) 
+summary(fit)
+
+# Calculate the rolling sum every four values
+
+sum4 <- rollapply(ftseIndex, 4, sum, na.rm=TRUE, fill = NA, align = "right")
+head(ftseIndex,10)
+head(sum4,10)
+
+# Calculate 10-day rolling mean:
+smoothIndex <- rollmean(x = ftseIndex,  # original series
+                        k = 10,  # width of the rolling window
+                        fill = NA)  # Pads head and/or tail with NA
+
+lines(smoothIndex, col = "RED")
+
+# Impute NA values in the original series, and apply rollapply()
+ftseIndex[c(40, 90, 300)] <- NA
+smoothIndex2 <- rollapply(data = ftseIndex,  # original series
+                          width = 10,  # width of the rolling window
+                          FUN = mean, na.rm = T,  # Any arbitrary function
+                          fill = NA)  # Padding
+lines(smoothIndex2, col = "GREEN")
+
+#***********************************************************#
+# Apply a regression funtion on a time series using rollapply
+#***********************************************************#
+rr <- rollapply(data = ftseIndex,  # original series
+                          width = 10,  # width of the rolling window
+                          FUN = function(z) lm(ftseIndex~ti), 
+                          by.column = FALSE, align = "right")  # Any arbitrary function
+                
+plot(rr)
+
+
+
