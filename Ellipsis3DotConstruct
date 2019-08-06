@@ -1,0 +1,41 @@
+
+#*************************************************************#
+# Example of Dot Function (also called Three Dots Construct)
+# Empowers a function to take any number of additional arguments
+# Allows function to take arguments that weren’t pre-defined or hard-coded when the function was built
+#*************************************************************#
+
+# Use Case #1: Call a function with variable arguments
+
+# Concept to depict it can take variable number of arg in a list
+
+f03 <- function(...) {
+  args <- list(...)
+  paste(args)
+  lapply(list(...), class)
+  }
+
+f03("Hello Mahindra", "Hello Tata")
+f03("Hello Mahindra", "Hello Tata", "Hello Maruti")
+
+
+# Call a function within your function and it can take variable number of args
+
+# New function to call the original function and also pass additional args
+
+new_fun <- function(x, ...) {
+  orig_fun (...)
+  args <- list(...)
+  paste(x,args)
+}
+
+# Original function when package was developed
+orig_fun <- function (y,z) {
+  list(y=y, z=z)
+}
+
+new_fun(x="Hello Mahindra", y="Hello Maruti", z="Hello Tata")
+
+
+  
+
