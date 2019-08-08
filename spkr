@@ -1,0 +1,52 @@
+# From sparkCapm-rStudio code
+
+Sys.setenv(SPARK_HOME="/usr/hdp/2.6.3.0-235/spark2")
+Sys.setenv("SPARKR_SUBMIT_ARGS"="--master yarn sparkr-shell")
+.libPaths(c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib"), .libPaths()))
+library(SparkR)
+
+# configure the spark driver properties
+sparkConfig <- list(spark.driver.memory="10g")
+
+
+sparkR.session(master="yarn",sparkConfig = sparkConfig)
+setLogLevel('ERROR')
+
+
+
+# # configure the spark driver properties
+# sparkConfig <- list(spark.driver.memory="10g",
+#                     spark.executor.instances="60",
+#                     spark.executor.cores="3",
+#                     spark.executor.memory="3G",
+#                     spark.sql.shuffle.partitions="1000")
+
+getwd()
+sdf <- read.df("/user/e664201/R/tcwd/gf/channing.csv",
+               delimiter =",", 
+               source="csv",
+               header="true",
+               inferSchema ="true",
+               na.strings = "NA")
+
+n1 <- nrow(sdf)
+m1 <- ncol(sdf)
+head(sdf, num =5)
+str(sdf)
+dtypes(sdf)
+schema(sdf)
+printSchema(sdf)
+
+#subsetting
+
+sdf_male <- filter(sdf, sdf$sex == "Male")
+sdf_time_gt100 <- filter(sdf,sdf$time > 100)
+
+nrow(sdf_time_gt100)
+
+#summary
+
+sdf_stat_time <- describe(sdf_male,"time")
+showDF(sdf_stat_time)
+
+
