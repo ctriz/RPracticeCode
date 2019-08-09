@@ -49,6 +49,38 @@ nrow(sdf_time_gt100)
 sdf_stat_time <- describe(sdf_male,"time")
 showDF(sdf_stat_time)
 
+#groupby
+
+sdf_gender <- count(groupBy(sdf, "sex"))
+showDF(sdf_gender)
+
+# run stats on R Dataset mtcars
+str(mtcars)
+
+
+#distribution
+
+hstats <- histogram(mtcars, "hp", nbins = 25)
+head(hstats)
+
+#Simple linear models
+
+fit <- lm(mpg ~ wt, data = mtcars)
+
+summary(fit)
+
+#Coerce appropriate variables into factors
+mtcars$cyl<-factor(mtcars$cyl)
+mtcars$vs<-factor(mtcars$vs)
+mtcars$gear<-factor(mtcars$gear)
+mtcars$carb<-factor(mtcars$carb)
+mtcars$am<-factor(mtcars$am,labels = c("Auto","Manual"))
+
+#Confirm variable conversion
+str(mtcars)
+
+aggregate(mpg~am, data = mtcars, mean)
+
 #mandatory code to run
 sparkR.session.stop()
 
