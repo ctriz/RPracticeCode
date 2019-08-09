@@ -49,4 +49,6 @@ nrow(sdf_time_gt100)
 sdf_stat_time <- describe(sdf_male,"time")
 showDF(sdf_stat_time)
 
+#mandatory code to run
+sparkR.session.stop()
 
